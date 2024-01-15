@@ -24,8 +24,8 @@ if [ ! -d tmp/ccloader ]; then
 fi
 
 if [ "$OS" == 'linux' ]; then
-    # NWJS_FOLDER='nwjs-v0.72.0-linux-x64'
-    NWJS_FOLDER='nwjs-sdk-v0.72.0-linux-x64'
+    NWJS_FOLDER='nwjs-v0.72.0-linux-x64'
+    # NWJS_FOLDER='nwjs-sdk-v0.72.0-linux-x64'
     NWJS_FILE="$NWJS_FOLDER.tar.gz"
     if [ ! -f $NWJS_FILE ]; then 
         echo "Downloading NWJS v0.72.0"
@@ -50,24 +50,6 @@ echo "Removing greenworks"
 rm -rf tmp/assets/modules
 echo "" > tmp/assets/mods/simplify/prestart.js
 
-echo "Removing maps"
-INCLUDE_AREAS='cargo-ship hideout'
-mkdir -p tmp/_maps
-mkdir -p tmp/_areas
-for area in $INCLUDE_AREAS; do
-    cp -r tmp/assets/data/maps/$area tmp/_maps/
-    cp tmp/assets/data/areas/${area}.json tmp/_areas/
-done
-cp tmp/assets/data/areas/fallback.json tmp/_areas/
-cp tmp/assets/data/maps/rhombus-square-view.json tmp/_maps
-rm -rf tmp/assets/data/maps/*
-cp -r tmp/_maps/* tmp/assets/data/maps/
-rm -rf tmp/_maps
-
-rm -rf tmp/assets/data/areas/*
-cp -r tmp/_areas/* tmp/assets/data/areas/
-rm -rf tmp/_areas
-
 rm -rf tmp/lib/vk_swiftshader_icd.json tmp/swiftshader
 rm -rf tmp/locales/*.info
 
@@ -90,13 +72,16 @@ fi
 shopt -s extglob
 # data/animations/npc/!(captain.json|cargo-crew.json|carla.json|designer.json|genius.json|glasses.json) \
 # potentials: media/gui
-ASSETS_TO_REMOVE="data/arena \
+ASSETS_TO_REMOVE="\
+    data/arena \
+    data/maps/!(cargo-ship|hideout|rhombus-square-view.json) \
+    data/areas/!(cargo-ship.json|hideout.json|fallback.json) \
     data/animations/boss/!(cargo-crab.json) \
     data/animations/enemies/!(mouse-bot.json|simple-bot.json|seahorse.json|shredder.json|shredder-cold.json|target-bot.json|turret-large.json) \
     data/animations/?(pets|henry-prop.json|player-poses-debug.json|player-sleeping.json|player-weak.json|player-xmas.json) \
     data/animations/?(shizuka-poses-manlea.json) \
     \
-    media/bgm/!(muCargohold.ogg|muCargohold-i.ogg|muSolar.ogg|muTitle.ogg|ability-got.ogg|muOldhideout.ogg|muFiercebattle.ogg|muFiercebattle-i.ogg|muSrank.ogg|muSrank-i.ogg|muSrank-i.ogg|muMysterious.ogg|muDistantfuture.ogg|muAwakened.ogg|muBattle1.ogg|muCrossworlds.ogg|muChallenge1.ogg|muChallenge1-i.ogg|muBattle1-i.ogg|muAvatar-i.ogg|muAvatar.ogg|muBossbattle.ogg|muBossbattle-i.ogg ) \
+    media/bgm/!(muCargohold.ogg|muCargohold-i.ogg|muSolar.ogg|muTitle.ogg|ability-got.ogg|muOldhideout.ogg|muFiercebattle.ogg|muFiercebattle-i.ogg|muSrank.ogg|muSrank-i.ogg|muSrank-i.ogg|muMysterious.ogg|muDistantfuture.ogg|muAwakened.ogg|muBattle1.ogg|muCrossworlds.ogg|muChallenge1.ogg|muChallenge1-i.ogg|muBattle1-i.ogg|muAvatar-i.ogg|muAvatar.ogg|muBossbattle.ogg|muBossbattle-i.ogg) \
     media/concept \
     media/entity/effects/!(ball-special.png|ball.png|circle.png|cold.png|combat-dark.png|crab-effects.png|debris.png|dust.png|explosion-round-l.png|explosion-round.png|explosion.png|guard.png|heat.png|hit1-old.png|hit1.png|hit2.png|icicles.png|lighter-particle.png|neutral.png|particles1.png|red-charge.png|sand-whirl.png|special-charge.png|spread1.png|spread2.png|sweep.png|sweep2.png|turret.png|water.png|bomb-explo.png|element-change.png) \
     media/entity/enemy/!(easy-bot*|generic-bot1.png|item-drops.png|mouse-bot.png|target-bot.png|turret-large.png|shredder.png|shredder-ice.png|boss) \
