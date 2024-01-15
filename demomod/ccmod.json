@@ -1,0 +1,8 @@
+{
+    "id": "demomod",
+    "version": "0.0.1",
+    "name": "demomod",
+    "description": "Makes the demo not crash",
+    "plugin": "plugin.js"
+  }
+  
