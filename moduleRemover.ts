@@ -1,4 +1,4 @@
-const fs: typeof import('fs') = require('fs')
+var fs: typeof import('fs') = require('fs')
 const fp = 'tmp/assets/js/game.compiled.js'
 
 let code: string = fs.readFileSync(fp).toString()

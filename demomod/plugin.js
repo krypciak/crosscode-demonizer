@@ -96,6 +96,7 @@ export default class DemoMod {
                 return 1
             },
         }
+        sc.PARTY_OPTIONS = ['Lea', 'Shizuka', 'Shizuka0']
 
         sc.TitleScreenButtonGui.inject({
             checkClearSaveFiles() {
@@ -165,6 +166,7 @@ export default class DemoMod {
                 this.tolerateMissingResources = true
             },
         })
+        const badNpcSet = new Set(['main.emilie', 'antagonists.fancyguy', 'antagonists.sidekick', 'main.schneider', 'main.buggy', 'main.grumpy', 'main.guild-leader'])
         ig.Game.inject({
             teleport(mapName, marker, hint, clearCache, reloadCache) {
                 if (mapName == 'cargo-ship.ship' && marker && marker.marker == 'containerTop') {
@@ -177,9 +179,26 @@ export default class DemoMod {
                 }
                 this.parent(mapName, marker, hint, clearCache, reloadCache)
             },
+            loadLevel(data, clearCache, reloadCache) {
+                data.entities = data.entities.filter(e => {
+                    if (e.type != 'NPC') return true
+                    const n = e.settings.characterName
+                    return (
+                        !badNpcSet.has(n) &&
+                        !n.startsWith('rookie-harbor') &&
+                        !n.startsWith('guards') &&
+                        !n.startsWith('adventurers') &&
+                        !n.startsWith('baki') &&
+                        !n.startsWith('business')
+                    )
+                })
+                this.parent(data, clearCache, reloadCache)
+            },
         })
 
         ig.ENTITY.WavePushPullBlock = ig.Class.extend({})
         ig.ENTITY.PushPullBlock = ig.Class.extend({})
+
+        sc.VA_CONFIG = {}
     }
 }
