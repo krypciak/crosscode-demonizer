@@ -12,6 +12,8 @@ All parts except the mods and the modloader are the property of [Radical Fish Ga
 This project's purpose is to spread the greatness of this game, and to give blind people a way to try the game out (see [CrossedEyes](https://github.com/CCDirectLink/CrossedEyes)).  
 The produced demos cover the same scope as the original demos, the game is physically unplayable after that (even if you tried really hard).  
 
+[![Releases](https://github.com/CCDirectLink/organization/blob/master/assets/badges/releases%402x.png)](https://github.com/krypciak/crosscode-demonizer/releases/latest/)
+
 # Usage
 
 | Argument | Value type | Description |
