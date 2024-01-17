@@ -107,6 +107,7 @@ if [ ! -d tmp/ccloader ]; then
 
     if [ "$BUNDLE_CROSSEDEYES" == 'no' ]; then
         rm -f tmp/assets/mods/!(simplify|ccloader-version-display|demomod)
+        rm -f tmp/CROSSEDEYES_MANUAL.md
     fi
 fi
 
@@ -228,9 +229,10 @@ NAME="crosscode-demo-$PLATFORM"
 mv tmp "$NAME"
 if [ "$COMPRESS" == 'yes' ]; then
     echo "Compressing..."
-    mkdir -p ../demos
+    mkdir -p ./demos
     FINAL_ARCHIVE="$NAME.zip"
-    OUTPATH="$(realpath "../demos/$FINAL_ARCHIVE")"
+    OUTPATH="$(realpath "./demos/$FINAL_ARCHIVE")"
+    rm -f "$OUTPATH"
     zip -q -r "$OUTPATH" "$NAME"
     echo "Output: $OUTPATH"
 fi

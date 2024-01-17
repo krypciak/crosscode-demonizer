@@ -1,7 +1,9 @@
-<!-- markdownlint-disable MD013 MD024 MD001 MD045 MD026 -->
+<!-- markdownlint-disable MD041 MD013 MD024 MD001 MD045 MD026 -->
 
 ![CrossCode](/src/img1.png)  
+
 ![demonizer](/src/gif1.gif)
+
 # CrossCode demo generator
 
 ## I do NOT own the rights to the distributed demos!!!
@@ -28,6 +30,10 @@ The produced demos cover the same scope as the original demos, the game is physi
 sh run.sh --file archives/cc-orig-linux.tar.gz --platform linux --nwjs archives/nwjs-sdk-v0.72.0-linux-x64.tar.gz --nocleanup --prettyjs
 # now you can directly run CrossCode
 ./tmp/CrossCode
+```
+
+```bash
+sh run.sh --file archives/cc-orig-windows.tar.gz --platform windows --bundle-crossedeyes
 ```
 
 ### Download NW.js quickly
