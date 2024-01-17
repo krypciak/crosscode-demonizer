@@ -31,7 +31,6 @@ The produced demos cover the same scope as the original demos, the game is physi
 ```bash
 sh run.sh --file archives/cc-orig-linux.tar.gz --platform linux --nwjs archives/nwjs-sdk-v0.72.0-linux-x64.tar.gz --nocleanup --prettyjs
 # now you can directly run CrossCode
-./tmp/CrossCode
 ```
 
 ```bash
