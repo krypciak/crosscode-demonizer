@@ -226,6 +226,10 @@ for file in $ASSETS_TO_REMOVE; do
 done
 
 NAME="crosscode-demo-$PLATFORM"
+if [ "$BUNDLE_CROSSEDEYES" == 'yes' ]; then
+    NAME="$NAME-crossedeyes"
+fi
+rm -rf "$NAME"
 mv tmp "$NAME"
 if [ "$COMPRESS" == 'yes' ]; then
     echo "Compressing..."
@@ -239,4 +243,5 @@ fi
 
 if [ "$CLEANUP" == 'yes' ]; then
     rm -rf "$NAME"
+    rm -rf tmp
 fi
