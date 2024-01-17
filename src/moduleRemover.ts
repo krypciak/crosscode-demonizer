@@ -176,7 +176,7 @@ for (let lineI = 0; lineI < sp.length; lineI++) {
             while (true) {
                 l = sp[lineI]
                 sp.splice(lineI, 1)
-                if (l == 'ig.baked = !0') {
+                if (l == 'ig.baked = !0;') {
                     lineI--
                     break
                 }

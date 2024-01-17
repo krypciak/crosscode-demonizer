@@ -1,10 +1,93 @@
 #!/bin/bash
-FILE=$1
+shopt -s extglob
+
+which wget > /dev/null 2>&1
+if [ $? == 1 ]; then
+    echo "wget not installed."
+    exit 1
+fi
+
+NWJS_FILE='none'
+FILE='unset'
+COMPRESS='yes'
+CLEANUP='yes'
+BUNDLE_CROSSEDEYES='no'
+PLATFORM='unset'
+PRETTY_JS='no'
+
+for i in "$@"; do
+  case $i in
+    --file)
+      shift
+      FILE="${1}"
+      shift
+      ;;
+    --platform)
+      shift
+      PLATFORM="${1}"
+      shift
+      ;;
+    --nwjs)
+      shift
+      NWJS_FILE="${1}"
+      shift
+      ;;
+    --nocompress)
+      COMPRESS='no'
+      shift
+      ;;
+    --nocleanup)
+      CLEANUP='no'
+      shift
+      ;;
+    --prettyjs)
+      PRETTY_JS='yes'
+      shift
+      ;;
+    --bundle-crossedeyes)
+      BUNDLE_CROSSEDEYES='yes'
+      shift
+      ;;
+    -*|--*)
+      echo "Unknown option $i"
+      exit 1
+      ;;
+    *)
+      ;;
+  esac
+done
+
 if [ ! -f "$FILE" ]; then
     echo "File: $FILE doesn't exist"
     exit 1
 fi
-OS=$2
+
+if [ "$FILE" != 'none' ] && [ "$(echo "$FILE" | tail -c 8)" != '.tar.gz' ]; then
+    echo "nwjs file: $NWJS_FILE has to have the .tar.gz extension"
+fi
+
+if [ "$PLATFORM" == 'windows' ] || [ "$PLATFORM" == 'linux' ] || [ "$PLATFORM" == 'macos' ]; then
+    echo "Platform: $PLATFORM"
+else
+    echo "Unknown platform: $PLATFORM"
+    exit 1
+fi
+
+if [ "$PLATFORM" == 'linux' ] && [ "$NWJS_FILE" == 'none' ]; then
+    echo "Linux requires a --nwjs argument"
+    exit 1
+fi
+
+if [ "$NWJS_FILE" != 'none' ] && [ ! -f "$NWJS_FILE" ]; then
+    echo "nwjs file: $NWJS_FILE doesn't exist"
+    exit 1
+fi
+
+if [ "$NWJS_FILE" != 'none' ] && [ "$(echo "$NWJS_FILE" | tail -c 8)" != '.tar.gz' ]; then
+    echo "nwjs file: $NWJS_FILE has to have the .tar.gz extension"
+fi
+
+rm -rf tmp
 
 mkdir -p tmp
 if [ ! -f tmp/package.json ]; then
@@ -13,38 +96,39 @@ if [ ! -f tmp/package.json ]; then
 fi
 
 if [ ! -d tmp/ccloader ]; then
-    if [ ! -f bundle.zip ]; then
+    if [ ! -f archives/bundle.zip ]; then
         CROSSEDEYES_URL="$(wget -qO- 'https://api.github.com/repos/CCDirectLink/CrossedEyes/releases/latest' \
-            | jq '.assets[] | select(.name == "bundle.zip").browser_download_url' | head -c -2 | tail -c +2)"
+            | npx jq '.assets[] | select(.name == "bundle.zip").browser_download_url' | head -c -2 | tail -c +2)"
         echo "Downloading $CROSSEDEYES_URL"
-        wget -q "$CROSSEDEYES_URL" -O bundle.zip
+        wget -q "$CROSSEDEYES_URL" -O archives/bundle.zip
     fi
     echo "Extracting bundle.zip"
-    unzip -qoD bundle.zip -d tmp/
+    unzip -qoD archives/bundle.zip -d tmp/
+
+    if [ "$BUNDLE_CROSSEDEYES" == 'no' ]; then
+        rm -f tmp/assets/mods/!(simplify|ccloader-version-display|demomod)
+    fi
 fi
 
-if [ "$OS" == 'linux' ]; then
-    # NWJS_FOLDER='nwjs-v0.72.0-linux-x64'
-    NWJS_FOLDER='nwjs-sdk-v0.72.0-linux-x64'
-    NWJS_FILE="$NWJS_FOLDER.tar.gz"
-    if [ ! -f $NWJS_FILE ]; then 
-        echo "Downloading NWJS v0.72.0"
-        wget 'https://dl.nwjs.io/v0.72.0/nwjs-v0.72.0-linux-x64.tar.gz'
-    fi
+if [ "$NWJS_FILE" != 'none' ]; then
+    # NWJS_FILE="$NWJS_FOLDER.tar.gz"
+    # if [ ! -f $NWJS_FILE ]; then 
+    #     echo "Downloading NWJS v0.72.0"
+    #     wget 'https://dl.nwjs.io/v0.72.0/nwjs-v0.72.0-linux-x64.tar.gz'
+    # fi
     if [ ! -f tmp/nwjssetup ]; then
         echo "Unpacking NWJS"
         tar -xf $NWJS_FILE --directory=tmp
-        cp -rf tmp/$NWJS_FOLDER/* tmp/
+        cp -rf tmp/nwjs-*/* tmp/
         mv tmp/nw tmp/CrossCode
-        rm -r tmp/$NWJS_FOLDER
+        rm -r tmp/nwjs-*
         touch tmp/nwjssetup
     fi
 fi
 
-cp -r ./demomod tmp/assets/mods/
+cp -r ./src/demomod tmp/assets/mods/
 
-echo "Stripping"
-echo "removing all extensions"
+echo "Removing all extensions"
 rm -rf tmp/assets/extension
 echo "Removing greenworks"
 rm -rf tmp/assets/modules
@@ -60,17 +144,16 @@ rm -f tmp/chrome_crashpad_handler
 if [ ! -f tmp/assets/js/stipped ]; then
     _TMP=$(pwd)
     cd tmp/assets/js
-    npx prettier --tab-width 0 --no-semi --print-width 10000 --bracket-same-line --single-quote --no-config -w game.compiled.js
+    npx prettier --tab-width 0 --print-width 10000 --bracket-same-line --single-quote --no-config -w game.compiled.js
     cd "$_TMP"
-    npx bun ./moduleRemover.ts
+    npx bun ./src/moduleRemover.ts
     cd tmp/assets/js
-    npx prettier --tab-width 4 --no-semi --print-width 500 --bracket-same-line --single-quote --no-config -w game.compiled.js
+    [ "$PRETTY_JS" == 'yes' ] && npx prettier --tab-width 4 --no-semi --print-width 500 --bracket-same-line --single-quote --no-config -w game.compiled.js
     cd "$_TMP"
     touch tmp/assets/js/stripped
 fi
 
-npx bun ./jsonPurger.ts
-shopt -s extglob
+npx bun ./src/jsonPurger.ts
 # potentials: media/gui
 ASSETS_TO_REMOVE="\
     data/arena \
@@ -138,11 +221,20 @@ ASSETS_TO_REMOVE="\
     impact/page/css/fonts \
 "
 for file in $ASSETS_TO_REMOVE; do
-    echo tmp/assets/$file
     rm -rf tmp/assets/$file
 done
 
+NAME="crosscode-demo-$PLATFORM"
+mv tmp "$NAME"
+if [ "$COMPRESS" == 'yes' ]; then
+    echo "Compressing..."
+    mkdir -p ../demos
+    FINAL_ARCHIVE="$NAME.zip"
+    OUTPATH="$(realpath "../demos/$FINAL_ARCHIVE")"
+    zip -q -r "$OUTPATH" "$NAME"
+    echo "Output: $OUTPATH"
+fi
 
-YOINK_MODULES=""
-
-# rm -rf tmp
+if [ "$CLEANUP" == 'yes' ]; then
+    rm -rf "$NAME"
+fi

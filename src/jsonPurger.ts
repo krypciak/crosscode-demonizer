@@ -16,7 +16,7 @@ const jsonPurge: Record</* file */ string, /* paths */ string[]> = {
         'questHubs[*]',
     ],
     'global-settings.json': ['ItemDestruct', 'ENTITY'],
-    'item-database.json': ['items[0:16:17:168,169:498,499:672,673:]'],
+    // 'item-database.json': ['items[0:16,17:168,169:498,499:672,673:675,676:]'],
     'terrain.json': ['$!!media/map/cargo-ship-inner.png,media/map/teleporter.png,media/map/old-hideout.png,media/map/old-hideout-inner.png,media/map/forest.png'],
     'tile-infos.json': ['$!!media/map/old-hideout-shadows.png,media/map/old-hideout-shadows2.png,media/map/forest.png'],
 }
@@ -34,10 +34,10 @@ for (const file in jsonPurge) {
         }
         try {
             jsonpath.apply(obj, purgePath, () => undefined)
-            console.log(purgePath)
+            console.log(`purging ${path}`)
         } catch (e) {
             console.log(`${path} fail ${purgePath}`)
         }
     }
-    fs.writeFileSync(path, JSON.stringify(obj, undefined, 4))
+    fs.writeFileSync(path, JSON.stringify(obj))
 }
