@@ -180,7 +180,7 @@ ASSETS_TO_REMOVE="\
     data/props/!(cabins.json|cargo-hold.json|dungeon-ar.json|forest-interior.json|forest.json|hideout.json|unknown-interior.json|trading-autumn.json|ship-bridge.json|ship-outer.json|rhombus-square-view.json) \
     data/players/!(lea.json|sergey.json|shizuka.json|shizuka0.json) \
     data/parallax/!(hideout.json|login.json|logo*|planet*|ship-far.json|title.json) \
-    data/enemies/!(captain.json|mouse-bot.json|turret-large.json|boss-test.json|target-bot.json|simple-bot.json|shredder-alpha.json|shredder-cold.json) \
+    data/enemies/!(captain.json|mouse-bot.json|turret-large.json|boss-test.json|target-bot.json|simple-bot.json|shredder-alpha.json|shredder-cold.json|shredder.json) \
     data/characters/!(cargo-crew|main|antagonists|objects) \
     data/characters/objects/!(barrier.json) \
     \
