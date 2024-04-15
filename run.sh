@@ -1,7 +1,7 @@
 #!/bin/bash
 shopt -s extglob
 
-which wget > /dev/null 2>&1
+which wget >/dev/null 2>&1
 if [ $? == 1 ]; then
     echo "wget not installed."
     exit 1
@@ -16,45 +16,44 @@ PLATFORM='unset'
 PRETTY_JS='no'
 
 for i in "$@"; do
-  case $i in
+    case $i in
     --file)
-      shift
-      FILE="${1}"
-      shift
-      ;;
+        shift
+        FILE="${1}"
+        shift
+        ;;
     --platform)
-      shift
-      PLATFORM="${1}"
-      shift
-      ;;
+        shift
+        PLATFORM="${1}"
+        shift
+        ;;
     --nwjs)
-      shift
-      NWJS_FILE="${1}"
-      shift
-      ;;
+        shift
+        NWJS_FILE="${1}"
+        shift
+        ;;
     --nocompress)
-      COMPRESS='no'
-      shift
-      ;;
+        COMPRESS='no'
+        shift
+        ;;
     --nocleanup)
-      CLEANUP='no'
-      shift
-      ;;
+        CLEANUP='no'
+        shift
+        ;;
     --prettyjs)
-      PRETTY_JS='yes'
-      shift
-      ;;
+        PRETTY_JS='yes'
+        shift
+        ;;
     --bundle-crossedeyes)
-      BUNDLE_CROSSEDEYES='yes'
-      shift
-      ;;
-    -*|--*)
-      echo "Unknown option $i"
-      exit 1
-      ;;
-    *)
-      ;;
-  esac
+        BUNDLE_CROSSEDEYES='yes'
+        shift
+        ;;
+    -* | --*)
+        echo "Unknown option $i"
+        exit 1
+        ;;
+    *) ;;
+    esac
 done
 
 if [ ! -f "$FILE" ]; then
@@ -97,8 +96,8 @@ fi
 
 if [ ! -d tmp/ccloader ]; then
     if [ ! -f archives/bundle.zip ]; then
-        CROSSEDEYES_URL="$(wget -qO- 'https://api.github.com/repos/CCDirectLink/CrossedEyes/releases/latest' \
-            | npx jq '.assets[] | select(.name == "bundle.zip").browser_download_url' | head -c -2 | tail -c +2)"
+        CROSSEDEYES_URL="$(wget -qO- 'https://api.github.com/repos/CCDirectLink/CrossedEyes/releases/latest' |
+            npx jq '.assets[] | select(.name == "bundle.zip").browser_download_url' | head -c -2 | tail -c +2)"
         echo "Downloading $CROSSEDEYES_URL"
         wget -q "$CROSSEDEYES_URL" -O archives/bundle.zip
     fi
@@ -113,7 +112,7 @@ fi
 
 if [ "$NWJS_FILE" != 'none' ]; then
     # NWJS_FILE="$NWJS_FOLDER.tar.gz"
-    # if [ ! -f $NWJS_FILE ]; then 
+    # if [ ! -f $NWJS_FILE ]; then
     #     echo "Downloading NWJS v0.72.0"
     #     wget 'https://dl.nwjs.io/v0.72.0/nwjs-v0.72.0-linux-x64.tar.gz'
     # fi
@@ -133,7 +132,7 @@ echo "Removing all extensions"
 rm -rf tmp/assets/extension
 echo "Removing greenworks"
 rm -rf tmp/assets/modules
-echo "" > tmp/assets/mods/simplify/prestart.js
+echo "" >tmp/assets/mods/simplify/prestart.js
 
 rm -rf tmp/lib/vk_swiftshader_icd.json tmp/swiftshader tmp/lib/libvk_swiftshader.so
 rm -rf tmp/locales/*.info
