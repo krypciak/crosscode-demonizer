@@ -139,7 +139,8 @@ rm -rf tmp/locales/*.info
 
 rm -rf tmp/assets/*.info
 
-rm -f tmp/chrome_crashpad_handler
+chmod +x tmp/chrome_crashpad_handler
+# rm -f tmp/chrome_crashpad_handler
 
 if [ ! -f tmp/assets/js/stipped ]; then
     _TMP=$(pwd)

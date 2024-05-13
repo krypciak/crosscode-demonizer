@@ -168,16 +168,30 @@ export default class DemoMod {
         })
         const badNpcSet = new Set(['main.emilie', 'antagonists.fancyguy', 'antagonists.sidekick', 'main.schneider', 'main.buggy', 'main.grumpy', 'main.guild-leader'])
         ig.Game.inject({
-            teleport(mapName, marker, hint, clearCache, reloadCache) {
-                if (mapName == 'cargo-ship.ship' && marker && marker.marker == 'containerTop') {
-                    function gotoTile() {
+            teleport(mapName, tpPos, hint, clearCache, reloadCache) {
+                if (mapName == 'cargo-ship.ship' && tpPos && tpPos.marker == 'containerTop') {
+                    const gotoTile = () => {
+                        ig.game.mapName = mapName
+                        ig.game.marker = tpPos.marker
+                        ig.game.teleporting.position = tpPos
+                        ig.storage.saveCheckpoint(ig.game.mapName, tpPos)
+                        ig.storage.saveAutoSlot(ig.storage.checkPointSave)
+
+                        const lastSlot = ig.storage.slots[0] && ig.storage.slots[0].data
+                        if (lastSlot && !(lastSlot.map == mapName && lastSlot.position && lastSlot.position.marker == tpPos.marker)) {
+                            ig.storage.slots.unshift(ig.storage.autoSlot)
+                        }
+                        ig.storage._saveToStorage()
+
+                        sc.model.enterReset()
+                        sc.model.enterRunning()
                         ig.game.reset()
                         sc.model.enterTitle()
                     }
                     sc.Dialogs.showChoiceDialog('The demo ends here.', null, ['Ok'], gotoTile)
                     return
                 }
-                this.parent(mapName, marker, hint, clearCache, reloadCache)
+                this.parent(mapName, tpPos, hint, clearCache, reloadCache)
             },
             loadLevel(data, clearCache, reloadCache) {
                 data.entities = data.entities.filter(e => {

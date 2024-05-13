@@ -26,7 +26,16 @@ The produced demos cover the same scope as the original demos, the game is physi
 | --prettyjs | none | Will prettify `game.compiled.js` |
 | --bundle-crossedeyes | none | Will bundle the [CrossedEyes](https://github.com/CCDirectLink/CrossedEyes) mod |
 
+
+## Building
+
+```bash
+pnpm install
+```
+
 ## Example usage
+
+You have to install the dependencies first
 
 ```bash
 sh run.sh --file archives/cc-orig-linux.tar.gz --platform linux --nwjs archives/nwjs-sdk-v0.72.0-linux-x64.tar.gz --nocleanup --prettyjs
@@ -62,7 +71,7 @@ If you purchased the game on steam, you can use [DepotDownloader](https://github
 ./DepotDownloader -username 'grasshead' -password 'justice' -app '368340' -depot '368349'
 ```
 
-Then go to the folder that contians the CrossCode executable, and run
+Then go to the folder that contains the CrossCode executable, and run
 
 ```bash
 tar -cf cc-orig-PLATFORM.tar.gz *
